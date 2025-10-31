@@ -236,131 +236,138 @@ class _SupportScreenState extends State<SupportScreen> with SingleTickerProvider
   }
 
   @override
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F5DC).withOpacity(0.1),
-      body: SafeArea(
-        child: NestedScrollView( // ✅ allows scroll for header + tab content
-          headerSliverBuilder: (context, innerBoxIsScrolled) => [
-            SliverToBoxAdapter(
-              child: Column(
-                children: [
-                  // 🔹 Header
-                  Container(
-                    color: Colors.white,
-                    padding: const EdgeInsets.all(16),
-                    child: Row(
-                      children: [
-                        IconButton(
-                          icon: const Icon(LucideIcons.arrowLeft),
-                          onPressed: widget.onBack,
-                          color: const Color(0xFF228B22), // forest-green
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text(
-                                'Help & Support',
-                                style: TextStyle(
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.bold,
-                                  color: Color(0xFF228B22),
-                                ),
-                              ),
-                              Text(
-                                'We\'re here to help you on your adventure journey',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.grey.shade700,
-                                ),
-                              ),
-                            ],
+      backgroundColor: const Color(0xFFF5F5DC).withOpacity(0.1), // earth-sand/10
+      body: Column(
+        children: [
+          // Header
+          Container(
+            color: Colors.white,
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    IconButton(
+                      icon: const Icon(LucideIcons.arrowLeft),
+                      onPressed: widget.onBack,
+                      color: const Color(0xFF228B22), // forest-green
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Help & Support',
+                            style: TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                              color: const Color(0xFF228B22), // forest-green
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  // 🔹 Emergency Notice
-                  Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Card(
-                      color: const Color(0xFFD22B2B).withOpacity(0.05),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        side: BorderSide(color: const Color(0xFFD22B2B).withOpacity(0.3)),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: Row(
-                          children: [
-                            const Icon(LucideIcons.alertTriangle, color: Color(0xFFD22B2B)),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Text(
-                                    'Emergency Support',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w600,
-                                      color: Color(0xFFD22B2B),
-                                    ),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    'If you\'re in immediate danger, call local emergency services or use our SOS feature.',
-                                    style: TextStyle(fontSize: 12, color: Colors.grey.shade700),
-                                  ),
-                                ],
-                              ),
+                          Text(
+                            'We\'re here to help you on your adventure journey',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: const Color(0xFF666666), // mountain-gray
                             ),
-                            const SizedBox(width: 12),
-                            ElevatedButton(
-                              onPressed: () {},
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFFD22B2B),
-                              ),
-                              child: const Text('SOS Help'),
-                            ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     ),
-                  ),
+                  ],
+                ),
+              ],
+            ),
+          ),
 
-                  // 🔹 Tabs
-                  Container(
-                    color: Colors.white,
-                    child: TabBar(
-                      controller: _tabController,
-                      labelColor: const Color(0xFF228B22),
-                      unselectedLabelColor: Colors.grey,
-                      indicatorColor: const Color(0xFF228B22),
-                      tabs: const [
-                        Tab(text: 'Help Center'),
-                        Tab(text: 'Contact Us'),
-                        Tab(text: 'Guides'),
-                      ],
+          // Emergency Notice
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Card(
+              color: const Color(0xFFD22B2B).withOpacity(0.05), // lucky-red/5
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+                side: BorderSide(color: const Color(0xFFD22B2B).withOpacity(0.3)), // lucky-red
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Row(
+                  children: [
+                    Icon(LucideIcons.alertTriangle, color: const Color(0xFFD22B2B)), // lucky-red
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Emergency Support',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              color: const Color(0xFFD22B2B), // lucky-red
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            'If you\'re in immediate danger, call local emergency services or use our SOS feature.',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: const Color(0xFF666666), // mountain-gray
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                    const SizedBox(width: 12),
+                    ElevatedButton(
+                      onPressed: () {},
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFFD22B2B), // lucky-red
+                      ),
+                      child: const Text('SOS Help'),
+                    ),
+                  ],
+                ),
               ),
             ),
-          ],
-          body: TabBarView(
-            controller: _tabController,
-            children: [
-              _buildHelpCenterTab(),
-              _buildContactUsTab(),
-              _buildGuidesTab(),
-            ],
           ),
-        ),
+
+          // Tabs
+          Container(
+            color: Colors.white,
+            child: TabBar(
+              controller: _tabController,
+              labelColor: const Color(0xFF228B22), // forest-green
+              unselectedLabelColor: const Color(0xFF666666), // mountain-gray
+              indicatorColor: const Color(0xFF228B22), // forest-green
+              tabs: const [
+                Tab(text: 'Help Center'),
+                Tab(text: 'Contact Us'),
+                Tab(text: 'Guides'),
+              ],
+            ),
+          ),
+
+          // Tab Content
+          Expanded(
+            child: TabBarView(
+              controller: _tabController,
+              children: [
+                // Help Center Tab
+                _buildHelpCenterTab(),
+                
+                // Contact Us Tab
+                _buildContactUsTab(),
+                
+                // Guides Tab
+                _buildGuidesTab(),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -480,63 +487,31 @@ class _SupportScreenState extends State<SupportScreen> with SingleTickerProvider
                     ),
                   ),
                   const SizedBox(height: 12),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  Row(
                     children: [
-                      // 🔹 Category + Helpful Count (first line)
-                      Wrap(
-                        spacing: 8,
-                        runSpacing: 4,
-                        crossAxisAlignment: WrapCrossAlignment.center,
-                        children: [
-                          Chip(
-                            label: Text(faq.category),
-                            backgroundColor: const Color(0xFFD2B48C).withOpacity(0.5),
-                          ),
-                          Text(
-                            '${faq.helpful} found this helpful',
-                            style: const TextStyle(
-                              fontSize: 12,
-                              color: Color(0xFF666666),
-                            ),
-                          ),
-                        ],
+                      Chip(
+                        label: Text(faq.category),
+                        backgroundColor: const Color(0xFFD2B48C).withOpacity(0.5), // earth-sand/50
                       ),
-
-                      const SizedBox(height: 6),
-
-                      // 🔹 Helpful / Not Helpful Buttons (next line, right-aligned)
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end, // ✅ right alignment
-                        children: [
-                          TextButton(
-                            onPressed: () {},
-                            style: TextButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                              minimumSize: const Size(60, 30),
-                            ),
-                            child: const Text(
-                              '👍 Helpful',
-                              style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
-                            ),
-                          ),
-                          TextButton(
-                            onPressed: () {},
-                            style: TextButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                              minimumSize: const Size(80, 30),
-                            ),
-                            child: const Text(
-                              '👎 Not helpful',
-                              style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
-                            ),
-                          ),
-                        ],
+                      const SizedBox(width: 8),
+                      Text(
+                        '${faq.helpful} found this helpful',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: const Color(0xFF666666), // mountain-gray
+                        ),
+                      ),
+                      const Spacer(),
+                      TextButton(
+                        onPressed: () {},
+                        child: const Text('👍 Helpful'),
+                      ),
+                      TextButton(
+                        onPressed: () {},
+                        child: const Text('👎 Not helpful'),
                       ),
                     ],
-                  )
+                  ),
                 ],
               ),
             ),
@@ -774,10 +749,7 @@ class _SupportScreenState extends State<SupportScreen> with SingleTickerProvider
                     ),
                   ),
                   const SizedBox(height: 4),
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 4,
-                    crossAxisAlignment: WrapCrossAlignment.center,
+                  Row(
                     children: [
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
@@ -793,18 +765,16 @@ class _SupportScreenState extends State<SupportScreen> with SingleTickerProvider
                           ),
                         ),
                       ),
-                      Flexible(
-                        child: Text(
-                          channel.responseTime,
-                          style: const TextStyle(
-                            fontSize: 10,
-                            color: Color(0xFF666666), // mountain-gray
-                          ),
-                          overflow: TextOverflow.ellipsis,
+                      const SizedBox(width: 8),
+                      Text(
+                        channel.responseTime,
+                        style: TextStyle(
+                          fontSize: 10,
+                          color: const Color(0xFF666666), // mountain-gray
                         ),
                       ),
                     ],
-                  )
+                  ),
                 ],
               ),
             ),
