@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:wildstride_app/screens/report_review_screen.dart';
+import 'package:wildstride_app/screens/safetyflowdiagram_screen.dart';
 import 'safetytips_screen.dart';
 import 'report_an_issue_screen.dart';
 import 'police_verification_screen.dart';
@@ -238,18 +240,30 @@ class SafetyTrustScreen extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const PoliceVerificationScreen(),
+                      builder: (context) => PoliceVerificationScreen(),
                     ),
                   );
                 },
               ),
               _buildFeatureCard(
                 context,
-                title: "My Reports",
-                subtitle: "Track your submitted reports",
-                icon: Icons.remove_red_eye_outlined,
-                iconColor: const Color(0xFFFFA500),
+                title: "View Report Status",
+                subtitle: "View the status of your report",
+                icon: LucideIcons.search,
+                iconColor: const Color(0xFF003B2E),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ReportReviewScreen(
+                        // ✅ Added onBack callback
+                        onBack: () => Navigator.pop(context),
+                      ),
+                    ),
+                  );
+                },
               ),
+              const SizedBox(height: 32),
               const SizedBox(height: 32),
 
               // Community Safety Section
@@ -334,13 +348,25 @@ class SafetyTrustScreen extends StatelessWidget {
 
               // View Flow Diagram
               GestureDetector(
-                onTap: () {},
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => SafetyFlowDiagramScreen(
+                        onBack: () => Navigator.pop(context), // ✅ consistent back navigation
+                      ),
+                    ),
+                  );
+                },
                 child: Container(
                   width: double.infinity,
                   padding: const EdgeInsets.symmetric(vertical: 14),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Colors.grey.withAlpha(102), style: BorderStyle.solid),
+                    border: Border.all(
+                      color: Colors.grey.withAlpha(102),
+                      style: BorderStyle.solid,
+                    ),
                   ),
                   child: const Center(
                     child: Text(
