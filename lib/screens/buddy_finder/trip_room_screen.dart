@@ -189,7 +189,7 @@ class _TripRoomScreenState extends State<TripRoomScreen> with SingleTickerProvid
   bool showEmojiPicker = false;
   bool showCameraMenu = false;
   bool showAttachMenu = false;
-  
+
   final List<Message> messages = [
     Message(
       id: 1,
@@ -260,9 +260,9 @@ class _TripRoomScreenState extends State<TripRoomScreen> with SingleTickerProvid
   }
 
   void handleCreateRoom() {
-    if (newRoomForm['title'].isEmpty || 
-        newRoomForm['location'].isEmpty || 
-        newRoomForm['startDate'].isEmpty || 
+    if (newRoomForm['title'].isEmpty ||
+        newRoomForm['location'].isEmpty ||
+        newRoomForm['startDate'].isEmpty ||
         newRoomForm['endDate'].isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please fill in all required fields')),
@@ -342,9 +342,9 @@ class _TripRoomScreenState extends State<TripRoomScreen> with SingleTickerProvid
           child: avatarUrl != null && avatarUrl.isNotEmpty
               ? Image.network(avatarUrl)
               : Text(
-                  name.split(' ').map((n) => n[0]).join(''),
-                  style: TextStyle(fontSize: size * 0.4, color: const Color(0xFF003B2E)),
-                ),
+            name.split(' ').map((n) => n[0]).join(''),
+            style: TextStyle(fontSize: size * 0.4, color: const Color(0xFF003B2E)),
+          ),
         ),
         if (isLive)
           Positioned(
@@ -364,68 +364,68 @@ class _TripRoomScreenState extends State<TripRoomScreen> with SingleTickerProvid
     );
   }
 
- Widget _buildTripRoomList() {
-  return Column(
-    children: [
-      // Header
-      Container(
-        padding: const EdgeInsets.all(16),
-        color: Colors.white,
-        child: Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  'Trip Rooms',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600, color: Color(0xFF003B2E)),
-                ),
-                ElevatedButton(
-                  onPressed: () => setState(() => showCreateForm = true),
-                  style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF003B2E)),
-                  child: const Row(
-                    children: [
-                      Icon(Icons.add, size: 16),
-                      SizedBox(width: 4),
-                      Text('Create Room'),
-                    ],
+  Widget _buildTripRoomList() {
+    return Column(
+      children: [
+        // Header
+        Container(
+          padding: const EdgeInsets.all(16),
+          color: Colors.white,
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'Trip Rooms',
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600, color: Color(0xFF003B2E)),
+                  ),
+                  ElevatedButton(
+                    onPressed: () => setState(() => showCreateForm = true),
+                    style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF003B2E)),
+                    child: const Row(
+                      children: [
+                        Icon(Icons.add, size: 16),
+                        SizedBox(width: 4),
+                        Text('Create Room'),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              // Search
+              TextField(
+                decoration: const InputDecoration(
+                  hintText: 'Search your trip rooms...',
+                  prefixIcon: Icon(Icons.search, size: 16),
+                  filled: true,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(8)), // Fixed this line
+                    borderSide: BorderSide.none,
                   ),
                 ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            // Search
-            TextField(
-              decoration: const InputDecoration(
-                hintText: 'Search your trip rooms...',
-                prefixIcon: Icon(Icons.search, size: 16),
-                filled: true,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(8)), // Fixed this line
-                  borderSide: BorderSide.none,
-                ),
+                onChanged: (value) => setState(() => searchQuery = value),
               ),
-              onChanged: (value) => setState(() => searchQuery = value),
-            ),
-          ],
+            ],
+          ),
         ),
-      ),
-      // Trip Rooms List
-      Expanded(
-        child: tripRooms.isEmpty
-            ? _buildEmptyState()
-            : ListView.builder(
-                padding: const EdgeInsets.all(16),
-                itemCount: tripRooms.length,
-                itemBuilder: (context, index) {
-                  final room = tripRooms[index];
-                  return _buildTripRoomCard(room);
-                },
-              ),
-      ),
-    ],
-  );
-}
+        // Trip Rooms List
+        Expanded(
+          child: tripRooms.isEmpty
+              ? _buildEmptyState()
+              : ListView.builder(
+            padding: const EdgeInsets.all(16),
+            itemCount: tripRooms.length,
+            itemBuilder: (context, index) {
+              final room = tripRooms[index];
+              return _buildTripRoomCard(room);
+            },
+          ),
+        ),
+      ],
+    );
+  }
 
   Widget _buildEmptyState() {
     return Center(
@@ -776,32 +776,49 @@ class _TripRoomScreenState extends State<TripRoomScreen> with SingleTickerProvid
           child: Column(
             children: [
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    children: [
-                      IconButton(
-                        onPressed: () => setState(() => selectedRoom = null),
-                        icon: const Icon(Icons.arrow_back, color: Colors.white),
-                      ),
-                      Text(
-                        selectedRoom!.title,
-                        style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w600),
-                      ),
-                    ],
+                  // Left side: Back + Title (takes remaining width)
+                  Expanded(
+                    child: Row(
+                      children: [
+                        IconButton(
+                          onPressed: () => setState(() => selectedRoom = null),
+                          icon: const Icon(Icons.arrow_back, color: Colors.white),
+                        ),
+                        Flexible(
+                          child: Text(
+                            selectedRoom!.title,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                  Row(
+
+                  // Right side: Right-aligned button + chip
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      TextButton(
+                      TextButton.icon(
                         onPressed: () => setState(() => showCreateForm = true),
-                        style: TextButton.styleFrom(foregroundColor: Colors.white),
-                        child: const Row(
-                          children: [
-                            Icon(Icons.add, size: 16),
-                            Text('New Room'),
-                          ],
+                        icon: const Icon(Icons.add, size: 16, color: Colors.white),
+                        label: const Text(
+                          'New Room',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        style: TextButton.styleFrom(
+                          padding: EdgeInsets.zero,
+                          minimumSize: const Size(0, 0),
+                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                         ),
                       ),
+                      const SizedBox(height: 4),
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                         decoration: BoxDecoration(
@@ -861,7 +878,7 @@ class _TripRoomScreenState extends State<TripRoomScreen> with SingleTickerProvid
             ],
           ),
         ),
-        
+
         // Tabs and Content
         Expanded(
           child: Column(
@@ -879,7 +896,7 @@ class _TripRoomScreenState extends State<TripRoomScreen> with SingleTickerProvid
                   ],
                 ),
               ),
-              
+
               // Tab Content
               Expanded(
                 child: TabBarView(
@@ -927,7 +944,7 @@ class _TripRoomScreenState extends State<TripRoomScreen> with SingleTickerProvid
                       children: [
                         // Messages
                         ...messages.map((message) => _buildMessageBubble(message)),
-                        
+
                         // Live Location Sharing Notice
                         Container(
                           margin: const EdgeInsets.only(top: 16),
@@ -957,7 +974,7 @@ class _TripRoomScreenState extends State<TripRoomScreen> with SingleTickerProvid
                     ),
                   ),
                 ),
-                
+
                 // Message Input Area
                 _buildMessageInputArea(),
               ],
@@ -979,7 +996,7 @@ class _TripRoomScreenState extends State<TripRoomScreen> with SingleTickerProvid
             _buildAvatar(message.sender, size: 32),
             const SizedBox(width: 12),
           ],
-          
+
           Expanded(
             child: Column(
               crossAxisAlignment: message.isCurrentUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
@@ -1000,7 +1017,7 @@ class _TripRoomScreenState extends State<TripRoomScreen> with SingleTickerProvid
                   ],
                 ),
                 const SizedBox(height: 4),
-                
+
                 // Message content
                 Container(
                   padding: const EdgeInsets.all(12),
@@ -1025,7 +1042,7 @@ class _TripRoomScreenState extends State<TripRoomScreen> with SingleTickerProvid
               ],
             ),
           ),
-          
+
           if (message.isCurrentUser) ...[
             const SizedBox(width: 12),
             _buildAvatar(message.sender, size: 32),
@@ -1104,13 +1121,13 @@ class _TripRoomScreenState extends State<TripRoomScreen> with SingleTickerProvid
         children: [
           // Camera Options Menu
           if (showCameraMenu) _buildCameraOptionsMenu(),
-          
+
           // Attachment Options Menu
           if (showAttachMenu) _buildAttachmentOptionsMenu(),
-          
+
           // Emoji Picker Menu
           if (showEmojiPicker) _buildEmojiPickerMenu(),
-          
+
           // Input Row
           Row(
             children: [
@@ -1128,7 +1145,7 @@ class _TripRoomScreenState extends State<TripRoomScreen> with SingleTickerProvid
                   color: showCameraMenu ? const Color(0xFFE66A00) : const Color(0xFF6B6B6B),
                 ),
               ),
-              
+
               // Attachment Button
               IconButton(
                 onPressed: () {
@@ -1143,7 +1160,7 @@ class _TripRoomScreenState extends State<TripRoomScreen> with SingleTickerProvid
                   color: showAttachMenu ? const Color(0xFFE66A00) : const Color(0xFF6B6B6B),
                 ),
               ),
-              
+
               // Message Input
               Expanded(
                 child: TextField(
@@ -1185,23 +1202,23 @@ class _TripRoomScreenState extends State<TripRoomScreen> with SingleTickerProvid
                   },
                 ),
               ),
-              
+
               // Send Button
               IconButton(
                 onPressed: currentMessage.trim().isEmpty
                     ? null
                     : () {
-                        handleSendMessage();
-                        setState(() {
-                          showCameraMenu = false;
-                          showAttachMenu = false;
-                          showEmojiPicker = false;
-                        });
-                      },
+                  handleSendMessage();
+                  setState(() {
+                    showCameraMenu = false;
+                    showAttachMenu = false;
+                    showEmojiPicker = false;
+                  });
+                },
                 icon: Icon(
                   Icons.send,
-                  color: currentMessage.trim().isEmpty 
-                      ? Colors.grey.shade400 
+                  color: currentMessage.trim().isEmpty
+                      ? Colors.grey.shade400
                       : const Color(0xFFE66A00),
                 ),
               ),
@@ -1332,8 +1349,8 @@ class _TripRoomScreenState extends State<TripRoomScreen> with SingleTickerProvid
 
   Widget _buildEmojiPickerMenu() {
     final travelEmojis = [
-      '😊', '👍', '❤️', '😂', '🎉', '🏔️', '🥾', '📍', 
-      '🌲', '🏕️', '🎒', '🧗', '🚶', '🌄', '⛰️', '🗺️', 
+      '😊', '👍', '❤️', '😂', '🎉', '🏔️', '🥾', '📍',
+      '🌲', '🏕️', '🎒', '🧗', '🚶', '🌄', '⛰️', '🗺️',
       '📸', '🔥', '⭐', '✅', '🙌', '💪', '🌟', '🎯'
     ];
 
@@ -1419,7 +1436,7 @@ class _TripRoomScreenState extends State<TripRoomScreen> with SingleTickerProvid
               ],
             ),
             const SizedBox(height: 16),
-            
+
             // Progress Bar
             LinearProgressIndicator(
               value: progressPercentage / 100,
@@ -1428,7 +1445,7 @@ class _TripRoomScreenState extends State<TripRoomScreen> with SingleTickerProvid
               minHeight: 8,
             ),
             const SizedBox(height: 24),
-            
+
             // Checklist Items
             Column(
               children: checklist.map((item) => CheckboxListTile(
@@ -1439,7 +1456,7 @@ class _TripRoomScreenState extends State<TripRoomScreen> with SingleTickerProvid
                     color: item.completed ? const Color(0xFF6B6B6B) : Colors.black,
                   ),
                 ),
-                subtitle: item.assignee != null 
+                subtitle: item.assignee != null
                     ? Text('Assigned to: ${item.assignee}')
                     : null,
                 value: item.completed,
@@ -1448,7 +1465,7 @@ class _TripRoomScreenState extends State<TripRoomScreen> with SingleTickerProvid
                 contentPadding: const EdgeInsets.symmetric(horizontal: 4),
               )).toList(),
             ),
-            
+
             // Add New Item Button
             SizedBox(
               width: double.infinity,
@@ -1521,7 +1538,7 @@ class _TripRoomScreenState extends State<TripRoomScreen> with SingleTickerProvid
               ],
             ),
             const SizedBox(height: 16),
-            
+
             // Schedule Items
             Column(
               children: selectedRoom!.schedule.map((event) => Container(
@@ -1628,7 +1645,7 @@ class _TripRoomScreenState extends State<TripRoomScreen> with SingleTickerProvid
               ],
             ),
             const SizedBox(height: 16),
-            
+
             // Budget Overview
             Row(
               children: [
@@ -1661,7 +1678,7 @@ class _TripRoomScreenState extends State<TripRoomScreen> with SingleTickerProvid
               ],
             ),
             const SizedBox(height: 16),
-            
+
             // Progress Bar
             LinearProgressIndicator(
               value: totalExpenses / selectedRoom!.totalBudget,
@@ -1670,7 +1687,7 @@ class _TripRoomScreenState extends State<TripRoomScreen> with SingleTickerProvid
               minHeight: 8,
             ),
             const SizedBox(height: 24),
-            
+
             // Expenses List
             Column(
               children: selectedRoom!.expenses.map((expense) => Container(
@@ -1715,7 +1732,7 @@ class _TripRoomScreenState extends State<TripRoomScreen> with SingleTickerProvid
                 ),
               )).toList(),
             ),
-            
+
             // Your Share
             Container(
               margin: const EdgeInsets.only(top: 16),
@@ -1749,40 +1766,40 @@ class _TripRoomScreenState extends State<TripRoomScreen> with SingleTickerProvid
   }
 
   Widget _buildBudgetCard(String title, String amount, Color backgroundColor, Color textColor) {
-  return Container(
-    padding: const EdgeInsets.all(16),
-    decoration: BoxDecoration(
-      color: backgroundColor,
-      borderRadius: BorderRadius.circular(8),
-    ),
-    child: Column(
-      children: [
-        Text(
-          amount,
-          style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-            color: textColor,
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: backgroundColor,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Column(
+        children: [
+          Text(
+            amount,
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: textColor,
+            ),
           ),
-        ),
-        const SizedBox(height: 4),
-        Text(
-          title,
-          style: const TextStyle(
-            fontSize: 12,
-            color: Color(0xFF6B6B6B),
+          const SizedBox(height: 4),
+          Text(
+            title,
+            style: const TextStyle(
+              fontSize: 12,
+              color: Color(0xFF6B6B6B),
+            ),
           ),
-        ),
-      ],
-    ),
-  );
-} // ← Add this closing brace if it's missing
+        ],
+      ),
+    );
+  } // ← Add this closing brace if it's missing
 
-@override
-Widget build(BuildContext context) {
-  return Scaffold(
-    body: selectedRoom == null ? _buildTripRoomList() : _buildSelectedRoomView(),
-    bottomSheet: showCreateForm ? _buildCreateRoomDialog() : null,
-  );
-}
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: selectedRoom == null ? _buildTripRoomList() : _buildSelectedRoomView(),
+      bottomSheet: showCreateForm ? _buildCreateRoomDialog() : null,
+    );
+  }
 }

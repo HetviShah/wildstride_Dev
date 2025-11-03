@@ -6,7 +6,7 @@ class Badge {
   final String name;
   final String description;
   final IconData icon;
-  final String rarity; // 'common' | 'rare' | 'epic' | 'legendary'
+  final String rarity;
   final String? earnedAt;
   final int? progress;
   final int? maxProgress;
@@ -50,57 +50,14 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProviderStateMixin {
   late TabController _tabController;
+
   final List<Badge> _mockBadges = [
-    Badge(
-      id: 1,
-      name: 'First Steps',
-      description: 'Completed your first adventure',
-      icon: LucideIcons.mountain,
-      rarity: 'common',
-      earnedAt: '2024-01-15',
-    ),
-    Badge(
-      id: 2,
-      name: 'Photographer',
-      description: 'Shared 50 adventure photos',
-      icon: LucideIcons.camera,
-      rarity: 'rare',
-      earnedAt: '2024-03-22',
-    ),
-    Badge(
-      id: 3,
-      name: 'Explorer',
-      description: 'Visited 10 different locations',
-      icon: LucideIcons.compass,
-      rarity: 'epic',
-      earnedAt: '2024-05-10',
-    ),
-    Badge(
-      id: 4,
-      name: 'Trip Leader',
-      description: 'Organized 5 successful trips',
-      icon: LucideIcons.crown,
-      rarity: 'legendary',
-      progress: 3,
-      maxProgress: 5,
-    ),
-    Badge(
-      id: 5,
-      name: 'Safety First',
-      description: 'Complete 100 safety check-ins',
-      icon: LucideIcons.shield,
-      rarity: 'rare',
-      earnedAt: '2024-06-30',
-    ),
-    Badge(
-      id: 6,
-      name: 'Social Butterfly',
-      description: 'Connect with 25 adventure buddies',
-      icon: LucideIcons.users,
-      rarity: 'rare',
-      progress: 18,
-      maxProgress: 25,
-    ),
+    Badge(id: 1, name: 'First Steps', description: 'Completed your first adventure', icon: LucideIcons.mountain, rarity: 'common', earnedAt: '2024-01-15'),
+    Badge(id: 2, name: 'Photographer', description: 'Shared 50 adventure photos', icon: LucideIcons.camera, rarity: 'rare', earnedAt: '2024-03-22'),
+    Badge(id: 3, name: 'Explorer', description: 'Visited 10 different locations', icon: LucideIcons.compass, rarity: 'epic', earnedAt: '2024-05-10'),
+    Badge(id: 4, name: 'Trip Leader', description: 'Organized 5 successful trips', icon: LucideIcons.crown, rarity: 'legendary', progress: 3, maxProgress: 5),
+    Badge(id: 5, name: 'Safety First', description: 'Complete 100 safety check-ins', icon: LucideIcons.shield, rarity: 'rare', earnedAt: '2024-06-30'),
+    Badge(id: 6, name: 'Social Butterfly', description: 'Connect with 25 adventure buddies', icon: LucideIcons.users, rarity: 'rare', progress: 18, maxProgress: 25),
   ];
 
   final List<TrustedBuddy> _mockTrustedBuddies = [
@@ -135,9 +92,7 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
     }
   }
 
-  Color _getRarityTextColor(String rarity) {
-    return rarity == 'legendary' ? Colors.black : Colors.white;
-  }
+  Color _getRarityTextColor(String rarity) => rarity == 'legendary' ? Colors.black : Colors.white;
 
   @override
   Widget build(BuildContext context) {
@@ -147,238 +102,89 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
     final progressToNextLevel = ((currentXP % 1000) / 1000) * 100;
     final streak = 15;
 
-    final earnedBadges = _mockBadges.where((badge) => badge.earnedAt != null).toList();
-    final inProgressBadges = _mockBadges.where((badge) => badge.progress != null && badge.earnedAt == null).toList();
+    final earnedBadges = _mockBadges.where((b) => b.earnedAt != null).toList();
+    final inProgressBadges = _mockBadges.where((b) => b.progress != null && b.earnedAt == null).toList();
 
     return Scaffold(
-      backgroundColor: const Color(0xFFE8D9B5).withOpacity(0.1),
-      body: Column(
-        children: [
-          // Header
-          if (widget.onBack != null)
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                border: Border(
-                  bottom: BorderSide(color: Colors.brown.shade200),
-                ),
-              ),
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      backgroundColor: const Color(0xFFF8F8F8),
+      body: SafeArea(
+        child: NestedScrollView( // ✅ fixes overflow with TabBar
+          headerSliverBuilder: (context, innerBoxIsScrolled) => [
+            SliverToBoxAdapter(
+              child: Column(
                 children: [
-                  Row(
-                    children: [
-                      IconButton(
-                        icon: const Icon(LucideIcons.arrowLeft),
-                        onPressed: widget.onBack,
-                        color: const Color(0xFF003B2E),
-                      ),
-                      const SizedBox(width: 8),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                  if (widget.onBack != null)
+                    Container(
+                      color: Colors.white,
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                      child: Row(
                         children: [
-                          const Text(
-                            'Profile',
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xFF003B2E),
-                            ),
+                          IconButton(
+                            icon: const Icon(LucideIcons.arrowLeft),
+                            onPressed: widget.onBack,
+                            color: const Color(0xFF003B2E),
                           ),
-                          Text(
-                            'Your adventure journey and achievements',
-                            style: TextStyle(
-                              fontSize: 13,
-                              color: Colors.grey.shade600,
-                            ),
+                          const SizedBox(width: 8),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                'Profile',
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: Color(0xFF003B2E),
+                                ),
+                              ),
+                              Text(
+                                'Your adventure journey and achievements',
+                                style: TextStyle(fontSize: 13, color: Colors.grey.shade600),
+                              ),
+                            ],
                           ),
                         ],
                       ),
-                    ],
+                    ),
+
+                  // Profile Header
+                  Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: _buildProfileHeader(currentLevel, currentXP, nextLevelXP, progressToNextLevel, streak),
+                  ),
+
+                  // Stats
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: _buildStatsCards(earnedBadges.length),
+                  ),
+
+                  const SizedBox(height: 8),
+
+                  // Tabs
+                  Card(
+                    margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    child: TabBar(
+                      controller: _tabController,
+                      labelColor: const Color(0xFF003B2E),
+                      unselectedLabelColor: Colors.grey,
+                      indicatorColor: const Color(0xFF003B2E),
+                      tabs: const [
+                        Tab(text: 'Overview'),
+                        Tab(text: 'Badges'),
+                        Tab(text: 'Trusted Buddies'),
+                      ],
+                    ),
                   ),
                 ],
               ),
             ),
-
-          Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                children: [
-                  // Profile Header Card
-                  _buildProfileHeader(currentLevel, currentXP, nextLevelXP, progressToNextLevel, streak),
-
-                  const SizedBox(height: 24),
-
-                  // Stats Cards
-                  _buildStatsCards(earnedBadges.length),
-
-                  const SizedBox(height: 24),
-
-                  // Tabs Section
-                  _buildTabsSection(earnedBadges, inProgressBadges, currentLevel, currentXP, nextLevelXP, progressToNextLevel, streak),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildProfileHeader(int currentLevel, int currentXP, int nextLevelXP, double progressToNextLevel, int streak) {
-    return Card(
-      child: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [const Color(0xFF003B2E).withOpacity(0.1), const Color(0xFFE66A00).withOpacity(0.1)],
-            begin: Alignment.centerLeft,
-            end: Alignment.centerRight,
-          ),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: Column(
+          ],
+          body: TabBarView(
+            controller: _tabController,
             children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Stack(
-                    children: [
-                      CircleAvatar(
-                        radius: 40,
-                        backgroundColor: const Color(0xFFE8D9B5),
-                        child: Text(
-                          'JD',
-                          style: TextStyle(
-                            fontSize: 20,
-                            color: const Color(0xFF003B2E),
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                      Positioned(
-                        bottom: 0,
-                        right: 0,
-                        child: Container(
-                          width: 20,
-                          height: 20,
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFFFD700),
-                            shape: BoxShape.circle,
-                          ),
-                          child: Icon(LucideIcons.crown, size: 12, color: Colors.black),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              'Jane Doe',
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            OutlinedButton.icon(
-                              onPressed: () {},
-                              icon: Icon(LucideIcons.edit3, size: 16),
-                              label: Text('Edit'),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 8),
-                        Column(
-                          children: [
-                            Row(
-                              children: [
-                                Icon(LucideIcons.mapPin, size: 16, color: const Color(0xFF6B6B6B)),
-                                const SizedBox(width: 8),
-                                Text('Vancouver, BC', style: TextStyle(color: const Color(0xFF6B6B6B))),
-                              ],
-                            ),
-                            const SizedBox(height: 4),
-                            Row(
-                              children: [
-                                Icon(LucideIcons.calendar, size: 16, color: const Color(0xFF6B6B6B)),
-                                const SizedBox(width: 8),
-                                Text('Member since Jan 2024', style: TextStyle(color: const Color(0xFF6B6B6B))),
-                              ],
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 12),
-                        Wrap(
-                          spacing: 8,
-                          children: [
-                            Chip(
-                              label: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Icon(LucideIcons.shield, size: 12),
-                                  const SizedBox(width: 4),
-                                  Text('Verified'),
-                                ],
-                              ),
-                              backgroundColor: const Color(0xFF4A90E2),
-                              labelStyle: TextStyle(color: Colors.white),
-                            ),
-                            Chip(
-                              label: Text('Level $currentLevel'),
-                              backgroundColor: const Color(0xFFE66A00),
-                              labelStyle: TextStyle(color: Colors.white),
-                            ),
-                            Chip(
-                              label: Text('$streak Day Streak'),
-                              backgroundColor: const Color(0xFFD72638),
-                              labelStyle: TextStyle(color: Colors.white),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-              // Level Progress
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.5),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text('Explorer Level $currentLevel', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
-                        Text('$currentXP / $nextLevelXP XP', style: TextStyle(fontSize: 14, color: const Color(0xFF6B6B6B))),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    LinearProgressIndicator(
-                      value: progressToNextLevel / 100,
-                      backgroundColor: Colors.grey.shade300,
-                      color: const Color(0xFF003B2E),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      '${nextLevelXP - currentXP} XP until next level',
-                      style: TextStyle(fontSize: 12, color: const Color(0xFF6B6B6B)),
-                    ),
-                  ],
-                ),
-              ),
+              _buildOverviewTab(earnedBadges),
+              _buildBadgesTab(earnedBadges, inProgressBadges),
+              _buildBuddiesTab(),
             ],
           ),
         ),
@@ -386,13 +192,66 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
     );
   }
 
+  // ------------------------------
+  // Sub-widgets
+  // ------------------------------
+
+  Widget _buildProfileHeader(int level, int xp, int nextXP, double progress, int streak) {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          children: [
+            Row(
+              children: [
+                CircleAvatar(
+                  radius: 35,
+                  backgroundColor: const Color(0xFFE8D9B5),
+                  child: const Text('JD', style: TextStyle(color: Color(0xFF003B2E), fontWeight: FontWeight.bold, fontSize: 18)),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text('Jane Doe', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+                      const SizedBox(height: 4),
+                      const Text('Vancouver, BC', style: TextStyle(color: Colors.grey, fontSize: 13)),
+                      const SizedBox(height: 4),
+                      Wrap(
+                        spacing: 8,
+                        children: [
+                          Chip(label: Text('Level $level'), backgroundColor: const Color(0xFFE66A00), labelStyle: const TextStyle(color: Colors.white)),
+                          Chip(label: Text('$streak Day Streak'), backgroundColor: const Color(0xFFD72638), labelStyle: const TextStyle(color: Colors.white)),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            LinearProgressIndicator(
+              value: progress / 100,
+              color: const Color(0xFF003B2E),
+              backgroundColor: Colors.grey.shade300,
+            ),
+            const SizedBox(height: 4),
+            Text('$xp / $nextXP XP', style: const TextStyle(fontSize: 12, color: Colors.grey)),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildStatsCards(int badgesCount) {
     return GridView.count(
+      crossAxisCount: 2,
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      crossAxisCount: 2,
-      mainAxisSpacing: 16,
-      crossAxisSpacing: 16,
+      mainAxisSpacing: 12,
+      crossAxisSpacing: 12,
+      childAspectRatio: 1.1,
       children: [
         _buildStatCard(LucideIcons.mountain, '12', 'Adventures', const Color(0xFF003B2E)),
         _buildStatCard(LucideIcons.users, '28', 'Buddies', const Color(0xFFE66A00)),
@@ -405,380 +264,192 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
   Widget _buildStatCard(IconData icon, String value, String label, Color color) {
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(12),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, size: 24, color: color),
-            const SizedBox(height: 8),
-            Text(value, style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: color)),
-            Text(label, style: TextStyle(fontSize: 14, color: const Color(0xFF6B6B6B))),
+            Icon(icon, color: color),
+            const SizedBox(height: 6),
+            Text(value, style: TextStyle(fontWeight: FontWeight.bold, color: color, fontSize: 20)),
+            Text(label, style: const TextStyle(color: Colors.grey)),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildTabsSection(List<Badge> earnedBadges, List<Badge> inProgressBadges, int currentLevel, int currentXP, int nextLevelXP, double progressToNextLevel, int streak) {
-    return Column(
-      children: [
-        Card(
-          child: TabBar(
-            controller: _tabController,
-            labelColor: const Color(0xFF003B2E),
-            unselectedLabelColor: Colors.grey,
-            indicatorColor: const Color(0xFF003B2E),
-            tabs: const [
-              Tab(text: 'Overview'),
-              Tab(text: 'Badges'),
-              Tab(text: 'Trusted Buddies'),
-            ],
+  Widget _buildOverviewTab(List<Badge> earned) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        children: [
+          _buildBioSection(),
+          const SizedBox(height: 16),
+          _buildAchievementsSection(earned),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildBioSection() => Card(
+    child: Padding(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text('About Me', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          const SizedBox(height: 8),
+          const Text(
+            'Adventure photographer and hiking enthusiast. Love exploring mountain trails and capturing nature’s beauty.',
+            style: TextStyle(color: Colors.grey),
           ),
+        ],
+      ),
+    ),
+  );
+
+  Widget _buildAchievementsSection(List<Badge> earned) => Card(
+    child: Padding(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text('Recent Achievements', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          const SizedBox(height: 16),
+          Column(
+            children: earned.take(3).map((b) => _buildAchievementItem(b)).toList(),
+          ),
+        ],
+      ),
+    ),
+  );
+
+  Widget _buildAchievementItem(Badge badge) => Container(
+    margin: const EdgeInsets.only(bottom: 12),
+    child: Row(
+      children: [
+        CircleAvatar(
+          backgroundColor: _getRarityColor(badge.rarity),
+          child: Icon(badge.icon, color: _getRarityTextColor(badge.rarity), size: 20),
         ),
-        SizedBox(
-          height: 400,
-          child: TabBarView(
-            controller: _tabController,
+        const SizedBox(width: 12),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildOverviewTab(earnedBadges),
-              _buildBadgesTab(earnedBadges, inProgressBadges),
-              _buildBuddiesTab(),
+              Text(badge.name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+              Text(badge.description, style: const TextStyle(color: Colors.grey, fontSize: 12)),
             ],
           ),
         ),
       ],
-    );
-  }
+    ),
+  );
 
-  Widget _buildOverviewTab(List<Badge> earnedBadges) {
+  Widget _buildBadgesTab(List<Badge> earned, List<Badge> progress) {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
         children: [
-          // Bio Card
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('About Me', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                  const SizedBox(height: 8),
-                  Text(
-                    'Adventure photographer and hiking enthusiast. Love exploring mountain trails and capturing the beauty of nature. Always looking for new places to discover and amazing people to share the journey with! 📸🏔️',
-                    style: TextStyle(color: const Color(0xFF6B6B6B)),
-                  ),
-                  const SizedBox(height: 16),
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: [
-                      _buildInterestChip('Photography'),
-                      _buildInterestChip('Hiking'),
-                      _buildInterestChip('Wildlife'),
-                      _buildInterestChip('Camping'),
-                      _buildInterestChip('Rock Climbing'),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ),
+          _buildBadgeGrid(earned),
           const SizedBox(height: 16),
-          // Recent Achievements
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('Recent Achievements', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                  const SizedBox(height: 16),
-                  Column(
-                    children: earnedBadges.take(3).map((badge) => _buildAchievementItem(badge)).toList(),
-                  ),
-                ],
-              ),
-            ),
-          ),
+          Column(children: progress.map((b) => _buildProgressBadgeItem(b)).toList()),
         ],
       ),
     );
   }
 
-  Widget _buildInterestChip(String label) {
-    return Chip(
-      label: Text(label),
-      backgroundColor: Colors.grey.shade200,
-      labelStyle: TextStyle(color: Colors.grey.shade700),
+  Widget _buildBadgeGrid(List<Badge> badges) {
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: badges.length,
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, crossAxisSpacing: 16, mainAxisSpacing: 16),
+      itemBuilder: (context, i) => _buildBadgeCard(badges[i]),
     );
   }
 
-  Widget _buildAchievementItem(Badge badge) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      child: Row(
-        children: [
-          Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [_getRarityColor(badge.rarity), _getRarityColor(badge.rarity).withOpacity(0.8)],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(badge.icon, size: 20, color: _getRarityTextColor(badge.rarity)),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(badge.name, style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
-                Text(badge.description, style: TextStyle(fontSize: 12, color: const Color(0xFF6B6B6B))),
-              ],
-            ),
-          ),
-          Chip(
-            label: Text(_formatDate(badge.earnedAt!)),
-            backgroundColor: Colors.transparent,
-            side: BorderSide(color: Colors.grey.shade300),
-            labelStyle: TextStyle(fontSize: 12),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildBadgesTab(List<Badge> earnedBadges, List<Badge> inProgressBadges) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        children: [
-          // Earned Badges
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('Earned Badges (${earnedBadges.length})', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                  const SizedBox(height: 16),
-                  GridView.builder(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      crossAxisSpacing: 16,
-                      mainAxisSpacing: 16,
-                      childAspectRatio: 0.8,
-                    ),
-                    itemCount: earnedBadges.length,
-                    itemBuilder: (context, index) => _buildBadgeCard(earnedBadges[index]),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          const SizedBox(height: 16),
-          // In Progress Badges
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('In Progress (${inProgressBadges.length})', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                  const SizedBox(height: 16),
-                  Column(
-                    children: inProgressBadges.map((badge) => _buildProgressBadgeItem(badge)).toList(),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildBadgeCard(Badge badge) {
-    return Container(
-      decoration: BoxDecoration(
-        color: const Color(0xFFE8D9B5).withOpacity(0.2),
-        borderRadius: BorderRadius.circular(12),
-      ),
+  Widget _buildBadgeCard(Badge badge) => Card(
+    child: Padding(
+      padding: const EdgeInsets.all(12),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Container(
-            width: 64,
-            height: 64,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [_getRarityColor(badge.rarity), _getRarityColor(badge.rarity).withOpacity(0.8)],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(badge.icon, size: 32, color: _getRarityTextColor(badge.rarity)),
+          CircleAvatar(
+            backgroundColor: _getRarityColor(badge.rarity),
+            radius: 28,
+            child: Icon(badge.icon, color: _getRarityTextColor(badge.rarity), size: 24),
           ),
           const SizedBox(height: 8),
-          Text(badge.name, style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 4),
-          Text(
-            badge.description,
-            style: TextStyle(fontSize: 12, color: const Color(0xFF6B6B6B)),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 8),
-          Chip(
-            label: Text(badge.rarity),
-            backgroundColor: Colors.transparent,
-            side: BorderSide(color: Colors.grey.shade300),
-            labelStyle: TextStyle(fontSize: 12),
-          ),
+          Text(badge.name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+          Text(badge.rarity, style: const TextStyle(color: Colors.grey, fontSize: 12)),
         ],
       ),
-    );
-  }
+    ),
+  );
 
   Widget _buildProgressBadgeItem(Badge badge) {
-    final progressPercentage = badge.progress != null && badge.maxProgress != null
-        ? (badge.progress! / badge.maxProgress!) * 100
-        : 0;
-
-    return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: const Color(0xFFE8D9B5).withOpacity(0.2),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 48,
-            height: 48,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [_getRarityColor(badge.rarity).withOpacity(0.6), _getRarityColor(badge.rarity).withOpacity(0.4)],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(badge.icon, size: 24, color: _getRarityTextColor(badge.rarity)),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(badge.name, style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
-                Text(badge.description, style: TextStyle(fontSize: 12, color: const Color(0xFF6B6B6B))),
-                const SizedBox(height: 8),
-                Row(
-                  children: [
-                    Expanded(
-                      child: LinearProgressIndicator(
-                        value: progressPercentage / 100,
-                        backgroundColor: Colors.grey.shade300,
-                        color: _getRarityColor(badge.rarity),
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      '${badge.progress}/${badge.maxProgress}',
-                      style: TextStyle(fontSize: 12, color: const Color(0xFF6B6B6B)),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildBuddiesTab() {
+    final percent = (badge.progress ?? 0) / (badge.maxProgress ?? 1);
     return Card(
+      margin: const EdgeInsets.only(bottom: 12),
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(12),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Trusted Buddies (${_mockTrustedBuddies.length})', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 16),
-            Column(
-              children: _mockTrustedBuddies.map((buddy) => _buildBuddyItem(buddy)).toList(),
+            Text(badge.name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+            Text(badge.description, style: const TextStyle(color: Colors.grey, fontSize: 12)),
+            const SizedBox(height: 8),
+            LinearProgressIndicator(
+              value: percent,
+              color: _getRarityColor(badge.rarity),
+              backgroundColor: Colors.grey.shade300,
             ),
+            const SizedBox(height: 4),
+            Text('${badge.progress}/${badge.maxProgress}', style: const TextStyle(color: Colors.grey, fontSize: 12)),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildBuddyItem(TrustedBuddy buddy) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
+  Widget _buildBuddiesTab() => SingleChildScrollView(
+    padding: const EdgeInsets.all(16),
+    child: Column(
+      children: _mockTrustedBuddies.map((b) => _buildBuddyItem(b)).toList(),
+    ),
+  );
+
+  Widget _buildBuddyItem(TrustedBuddy b) => Card(
+    margin: const EdgeInsets.only(bottom: 12),
+    child: Padding(
       padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.grey.shade50,
-        borderRadius: BorderRadius.circular(12),
-      ),
       child: Row(
         children: [
           CircleAvatar(
             backgroundColor: const Color(0xFFE8D9B5),
-            child: Text(
-              buddy.name.split(' ').map((n) => n[0]).join(''),
-              style: TextStyle(color: const Color(0xFF003B2E), fontWeight: FontWeight.bold),
-            ),
+            child: Text(b.name.split(' ').map((n) => n[0]).join(''),
+                style: const TextStyle(color: Color(0xFF003B2E), fontWeight: FontWeight.bold)),
           ),
           const SizedBox(width: 12),
           Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text(b.name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+              Text('${b.trips} adventures together', style: const TextStyle(color: Colors.grey, fontSize: 12)),
+            ]),
+          ),
+          Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
+            Row(
               children: [
-                Text(buddy.name, style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
-                Text('${buddy.trips} adventures together', style: TextStyle(fontSize: 12, color: const Color(0xFF6B6B6B))),
+                const Icon(Icons.star, color: Colors.amber, size: 16),
+                Text(b.rating.toString(), style: const TextStyle(fontWeight: FontWeight.bold)),
               ],
             ),
-          ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Row(
-                children: [
-                  Icon(LucideIcons.star, size: 16, color: Colors.yellow.shade700),
-                  const SizedBox(width: 4),
-                  Text(buddy.rating.toString(), style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
-                ],
-              ),
-              const SizedBox(height: 4),
-              Chip(
-                label: Text('Trusted', style: TextStyle(fontSize: 12)),
-                backgroundColor: Colors.transparent,
-                side: BorderSide(color: Colors.grey.shade300),
-              ),
-            ],
-          ),
+            const SizedBox(height: 4),
+            Chip(label: const Text('Trusted', style: TextStyle(fontSize: 12)), backgroundColor: Colors.transparent),
+          ]),
         ],
       ),
-    );
-  }
-
-  String _formatDate(String dateString) {
-    final date = DateTime.tryParse(dateString);
-    if (date != null) {
-      return '${date.month}/${date.day}/${date.year}';
-    }
-    return dateString;
-  }
+    ),
+  );
 }

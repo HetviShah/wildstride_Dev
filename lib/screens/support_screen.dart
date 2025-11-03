@@ -222,7 +222,7 @@ class _SupportScreenState extends State<SupportScreen> with SingleTickerProvider
       final matchesSearch = faq.question.toLowerCase().contains(_searchQuery.toLowerCase()) ||
           faq.answer.toLowerCase().contains(_searchQuery.toLowerCase());
       final matchesCategory = _selectedCategory == 'all' || faq.category == _selectedCategory;
-      
+
       return matchesSearch && matchesCategory;
     }).toList();
   }
@@ -358,10 +358,10 @@ class _SupportScreenState extends State<SupportScreen> with SingleTickerProvider
               children: [
                 // Help Center Tab
                 _buildHelpCenterTab(),
-                
+
                 // Contact Us Tab
                 _buildContactUsTab(),
-                
+
                 // Guides Tab
                 _buildGuidesTab(),
               ],
@@ -446,7 +446,7 @@ class _SupportScreenState extends State<SupportScreen> with SingleTickerProvider
 
   Widget _buildFAQItem(FAQ faq) {
     final isExpanded = _expandedFAQ == faq.id;
-    
+
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
@@ -487,31 +487,63 @@ class _SupportScreenState extends State<SupportScreen> with SingleTickerProvider
                     ),
                   ),
                   const SizedBox(height: 12),
-                  Row(
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Chip(
-                        label: Text(faq.category),
-                        backgroundColor: const Color(0xFFD2B48C).withOpacity(0.5), // earth-sand/50
+                      // 🔹 Category + Helpful Count (first line)
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 4,
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        children: [
+                          Chip(
+                            label: Text(faq.category),
+                            backgroundColor: const Color(0xFFD2B48C).withOpacity(0.5),
+                          ),
+                          Text(
+                            '${faq.helpful} found this helpful',
+                            style: const TextStyle(
+                              fontSize: 12,
+                              color: Color(0xFF666666),
+                            ),
+                          ),
+                        ],
                       ),
-                      const SizedBox(width: 8),
-                      Text(
-                        '${faq.helpful} found this helpful',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: const Color(0xFF666666), // mountain-gray
-                        ),
-                      ),
-                      const Spacer(),
-                      TextButton(
-                        onPressed: () {},
-                        child: const Text('👍 Helpful'),
-                      ),
-                      TextButton(
-                        onPressed: () {},
-                        child: const Text('👎 Not helpful'),
+
+                      const SizedBox(height: 6),
+
+                      // 🔹 Helpful / Not Helpful Buttons (next line, right-aligned)
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end, // ✅ right alignment
+                        children: [
+                          TextButton(
+                            onPressed: () {},
+                            style: TextButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                              minimumSize: const Size(60, 30),
+                            ),
+                            child: const Text(
+                              '👍 Helpful',
+                              style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+                            ),
+                          ),
+                          TextButton(
+                            onPressed: () {},
+                            style: TextButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                              minimumSize: const Size(80, 30),
+                            ),
+                            child: const Text(
+                              '👎 Not helpful',
+                              style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+                            ),
+                          ),
+                        ],
                       ),
                     ],
-                  ),
+                  )
                 ],
               ),
             ),
@@ -749,7 +781,10 @@ class _SupportScreenState extends State<SupportScreen> with SingleTickerProvider
                     ),
                   ),
                   const SizedBox(height: 4),
-                  Row(
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 4,
+                    crossAxisAlignment: WrapCrossAlignment.center,
                     children: [
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
@@ -765,12 +800,14 @@ class _SupportScreenState extends State<SupportScreen> with SingleTickerProvider
                           ),
                         ),
                       ),
-                      const SizedBox(width: 8),
-                      Text(
-                        channel.responseTime,
-                        style: TextStyle(
-                          fontSize: 10,
-                          color: const Color(0xFF666666), // mountain-gray
+                      Flexible(
+                        child: Text(
+                          channel.responseTime,
+                          style: const TextStyle(
+                            fontSize: 10,
+                            color: Color(0xFF666666), // mountain-gray
+                          ),
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
                     ],
