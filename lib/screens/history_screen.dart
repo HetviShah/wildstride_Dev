@@ -1,31 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-
-// Enums
-enum AdventureStatus { completed, cancelled, ongoing }
-enum AdventureCategory { hiking, camping, climbing, photography, cycling }
-enum Difficulty { easy, moderate, hard }
-
-// Models
-class Participant {
-  final int id;
-  final String name;
-  final String avatar;
-  Participant({required this.id, required this.name, required this.avatar});
-}
-
 class Adventure {
   final int id;
   final String title;
   final String location;
   final String date;
   final String duration;
-  final double rating;
+  final int rating;
   final int photos;
-  final List<Participant> participants;
-  final AdventureStatus status;
-  final AdventureCategory category;
-  final Difficulty difficulty;
+  final List<Map<String, String>> participants;
+  final String status;
+  final String category;
+  final String difficulty;
   final String coverImage;
   final List<String> highlights;
   final String? distance;
@@ -50,369 +36,315 @@ class Adventure {
   });
 }
 
-// Mock data
-final List<Adventure> mockAdventures = [
-  Adventure(
-    id: 1,
-    title: 'Banff National Park Hiking',
-    location: 'Banff, Alberta',
-    date: '2024-08-15',
-    duration: '3 days',
-    rating: 5,
-    photos: 47,
-    participants: [
-      Participant(id: 1, name: 'Alex Chen', avatar: ''),
-      Participant(id: 2, name: 'Sarah Kim', avatar: ''),
-    ],
-    status: AdventureStatus.completed,
-    category: AdventureCategory.hiking,
-    difficulty: Difficulty.moderate,
-    coverImage: '',
-    highlights: ['Lake Louise', 'Moraine Lake', 'Plain of Six Glaciers'],
-    distance: '24.5 km',
-    elevation: '850m gain',
-  ),
-  Adventure(
-    id: 2,
-    title: 'Vancouver Island Cycling',
-    location: 'Victoria, BC',
-    date: '2024-08-30',
-    duration: '1 day',
-    rating: 0,
-    photos: 0,
-    participants: [Participant(id: 3, name: 'Tom Wilson', avatar: '')],
-    status: AdventureStatus.cancelled,
-    category: AdventureCategory.cycling,
-    difficulty: Difficulty.easy,
-    coverImage: '',
-    highlights: [],
-    distance: '25 km planned',
-    elevation: '200m gain',
-  ),
-];
-
-// Helpers
-IconData getCategoryIcon(AdventureCategory category) {
-  switch (category) {
-    case AdventureCategory.hiking:
-    case AdventureCategory.climbing:
-      return Icons.terrain;
-    case AdventureCategory.camping:
-    case AdventureCategory.cycling:
-      return Icons.navigation;
-    case AdventureCategory.photography:
-      return Icons.camera_alt;
-  }
-}
-
-Color getCategoryColor(AdventureCategory category) {
-  switch (category) {
-    case AdventureCategory.hiking:
-      return const Color(0xFF228B22);
-    case AdventureCategory.camping:
-      return const Color(0xFFFF8C00);
-    case AdventureCategory.climbing:
-      return const Color(0xFFD22B2B);
-    case AdventureCategory.photography:
-      return const Color(0xFF87CEEB);
-    case AdventureCategory.cycling:
-      return const Color(0xFFFFD700);
-  }
-}
-
-Color getDifficultyColor(Difficulty difficulty) {
-  switch (difficulty) {
-    case Difficulty.easy:
-      return Colors.green;
-    case Difficulty.moderate:
-      return const Color(0xFFFF8C00);
-    case Difficulty.hard:
-      return const Color(0xFFD22B2B);
-  }
-}
-
-Color getStatusColor(AdventureStatus status) {
-  switch (status) {
-    case AdventureStatus.completed:
-      return Colors.green;
-    case AdventureStatus.cancelled:
-      return const Color(0xFFD22B2B);
-    case AdventureStatus.ongoing:
-      return const Color(0xFF87CEEB);
-  }
-}
-
-String getDifficultyText(Difficulty difficulty) {
-  switch (difficulty) {
-    case Difficulty.easy:
-      return 'easy';
-    case Difficulty.moderate:
-      return 'moderate';
-    case Difficulty.hard:
-      return 'hard';
-  }
-}
-
-String getStatusText(AdventureStatus status) {
-  switch (status) {
-    case AdventureStatus.completed:
-      return 'completed';
-    case AdventureStatus.cancelled:
-      return 'cancelled';
-    case AdventureStatus.ongoing:
-      return 'ongoing';
-  }
-}
-
-String getCategoryText(AdventureCategory category) {
-  switch (category) {
-    case AdventureCategory.hiking:
-      return 'hiking';
-    case AdventureCategory.camping:
-      return 'camping';
-    case AdventureCategory.climbing:
-      return 'climbing';
-    case AdventureCategory.photography:
-      return 'photography';
-    case AdventureCategory.cycling:
-      return 'cycling';
-  }
-}
-
-// Main Screen
 class HistoryScreen extends StatefulWidget {
-  final VoidCallback? onBack;
-  const HistoryScreen({Key? key, this.onBack}) : super(key: key);
+  final VoidCallback? onBack; // ✅ optional onBack callback
+
+  const HistoryScreen({super.key, this.onBack});
+
   @override
-  _HistoryScreenState createState() => _HistoryScreenState();
+  State<HistoryScreen> createState() => _HistoryScreenState();
 }
 
 class _HistoryScreenState extends State<HistoryScreen> {
-  String _searchQuery = '';
-  String _selectedCategory = 'all';
-  String _selectedYear = '2024';
+  final TextEditingController _searchController = TextEditingController();
+  String selectedCategory = 'all';
+  String selectedYear = '2024';
+
+  final List<Adventure> _mockAdventures = [
+    Adventure(
+      id: 1,
+      title: 'Banff National Park Hiking',
+      location: 'Banff, Alberta',
+      date: '2024-08-15',
+      duration: '3 days',
+      rating: 5,
+      photos: 47,
+      participants: [
+        {'name': 'Alex Chen', 'avatar': ''},
+        {'name': 'Sarah Kim', 'avatar': ''},
+        {'name': 'Mike Johnson', 'avatar': ''},
+      ],
+      status: 'completed',
+      category: 'hiking',
+      difficulty: 'moderate',
+      coverImage: 'https://picsum.photos/400/200',
+      highlights: ['Lake Louise', 'Moraine Lake', 'Plain of Six Glaciers'],
+      distance: '24.5 km',
+      elevation: '850m gain',
+    ),
+    Adventure(
+      id: 2,
+      title: 'Pacific Coast Trail Photography',
+      location: 'Tofino, BC',
+      date: '2024-07-28',
+      duration: '2 days',
+      rating: 4,
+      photos: 63,
+      participants: [
+        {'name': 'Emma Wilson', 'avatar': ''},
+        {'name': 'Jordan Liu', 'avatar': ''},
+      ],
+      status: 'completed',
+      category: 'photography',
+      difficulty: 'easy',
+      coverImage: 'https://picsum.photos/401/200',
+      highlights: ['Chesterman Beach', 'Wild Pacific Trail', 'Sunset Photography'],
+      distance: '8.2 km',
+      elevation: '120m gain',
+    ),
+  ];
+
+  List<Adventure> get filteredAdventures {
+    return _mockAdventures.where((adv) {
+      final query = _searchController.text.toLowerCase();
+      final matchesSearch = adv.title.toLowerCase().contains(query) ||
+          adv.location.toLowerCase().contains(query);
+      final matchesCategory =
+          selectedCategory == 'all' || adv.category == selectedCategory;
+      final matchesYear = adv.date.startsWith(selectedYear);
+      return matchesSearch && matchesCategory && matchesYear;
+    }).toList();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final filteredAdventures = mockAdventures.where((adventure) {
-      final matchesSearch = adventure.title.toLowerCase().contains(_searchQuery.toLowerCase()) ||
-          adventure.location.toLowerCase().contains(_searchQuery.toLowerCase());
-      final matchesCategory = _selectedCategory == 'all' || getCategoryText(adventure.category) == _selectedCategory;
-      final matchesYear = adventure.date.startsWith(_selectedYear);
-      return matchesSearch && matchesCategory && matchesYear;
-    }).toList();
-
-    final completedAdventures = filteredAdventures.where((a) => a.status == AdventureStatus.completed).toList();
-
-    final stats = {
-      'totalAdventures': completedAdventures.length,
-      'totalDistance': completedAdventures.fold<double>(0.0, (sum, adv) {
-        final numericDistance =
-            double.tryParse(adv.distance?.replaceAll(RegExp(r'[^\d.]'), '') ?? '0') ?? 0.0;
-        return sum + numericDistance;
-      }),
-      'totalPhotos': completedAdventures.fold<int>(0, (sum, adv) => sum + (adv.photos)),
-      'averageRating': completedAdventures.isNotEmpty
-          ? completedAdventures.fold<double>(0.0, (sum, adv) => sum + adv.rating) /
-          completedAdventures.length
-          : 0.0,
-    };
+    final completed = filteredAdventures.where((a) => a.status == 'completed').toList();
+    final totalDistance = completed.fold<double>(
+        0, (sum, a) => sum + double.tryParse(a.distance?.replaceAll(RegExp(r'[^\d.]'), '') ?? '0')!);
+    final avgRating = completed.isEmpty
+        ? 0
+        : completed.fold<int>(0, (sum, a) => sum + a.rating) / completed.length;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F5),
-      body: SafeArea(
+      backgroundColor: const Color(0xFFF7F5F2),
+      appBar: AppBar(
+        title: const Text(
+          'Adventure History',
+          style: TextStyle(color: Color(0xFF003B2E)),
+        ),
+        backgroundColor: Colors.white,
+        iconTheme: const IconThemeData(color: Color(0xFF003B2E)),
+        elevation: 1,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            if (widget.onBack != null) {
+              widget.onBack!(); // ✅ trigger custom callback if provided
+            } else {
+              Navigator.pop(context); // ✅ fallback: pop current route
+            }
+          },
+        ),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            // Header
-            Container(
-              color: Colors.white,
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                children: [
-                  Row(
-                    children: [
-                      IconButton(
-                        icon: const Icon(Icons.arrow_back, color: Color(0xFF228B22)),
-                        onPressed: widget.onBack,
-                      ),
-                      const SizedBox(width: 12),
-                      const Expanded(
-                        child: Text(
-                          'Adventure History',
-                          style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF228B22),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  TextField(
-                    decoration: InputDecoration(
-                      hintText: 'Search adventures or locations...',
-                      prefixIcon: const Icon(Icons.search, color: Color(0xFF808080)),
-                      filled: true,
-                      fillColor: Colors.white,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide: BorderSide(color: const Color(0xFF808080).withOpacity(0.3)),
-                      ),
-                    ),
-                    onChanged: (value) {
-                      setState(() {
-                        _searchQuery = value;
-                      });
-                    },
-                  ),
-                ],
-              ),
-            ),
-
-            // Content
+            _buildSearchFilters(),
+            const SizedBox(height: 12),
+            _buildStatsRow(completed.length, totalDistance, avgRating.toDouble()),
+            const SizedBox(height: 12),
             Expanded(
-              child: ListView(
-                padding: const EdgeInsets.all(16),
-                children: [
-                  Wrap(
-                    spacing: 12,
-                    runSpacing: 12,
-                    children: [
-                      _buildStatCard(Icons.terrain, '${stats['totalAdventures']}', 'Adventures',
-                          const Color(0xFF228B22)),
-                      _buildStatCard(Icons.navigation,
-                          '${(stats['totalDistance'] ?? 0.0).toStringAsFixed(1)} km', 'Distance',
-                          const Color(0xFFFF8C00)),
-                      _buildStatCard(Icons.camera_alt, '${stats['totalPhotos']}', 'Photos',
-                          const Color(0xFF87CEEB)),
-                      _buildStatCard(Icons.star, (stats['averageRating'] ?? 0.0).toStringAsFixed(1),
-                          'Avg Rating', const Color(0xFFFFD700)),
-                    ],
-                  ),
-                  const SizedBox(height: 24),
-
-                  // Adventures list
-                  if (filteredAdventures.isNotEmpty)
-                    ...filteredAdventures.map((adv) => _buildAdventureCard(adv)).toList()
-                  else
-                    Column(
-                      children: const [
-                        Icon(Icons.terrain, size: 48, color: Color(0xFF808080)),
-                        SizedBox(height: 12),
-                        Text('No adventures found',
-                            style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: Color(0xFF228B22))),
-                      ],
-                    ),
-                ],
+              child: filteredAdventures.isEmpty
+                  ? _buildEmptyState()
+                  : ListView.builder(
+                itemCount: filteredAdventures.length,
+                itemBuilder: (context, index) {
+                  final adv = filteredAdventures[index];
+                  return _buildAdventureCard(adv);
+                },
               ),
             ),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildSearchFilters() {
+    return Column(
+      children: [
+        TextField(
+          controller: _searchController,
+          onChanged: (_) => setState(() {}),
+          decoration: InputDecoration(
+            prefixIcon: const Icon(Icons.search, color: Color(0xFF6B6B6B)),
+            hintText: "Search adventures or locations...",
+            filled: true,
+            fillColor: Colors.white,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide.none,
+            ),
+          ),
+        ),
+        const SizedBox(height: 8),
+        Row(
+          children: [
+            Expanded(
+              child: DropdownButtonFormField<String>(
+                value: selectedCategory,
+                decoration: InputDecoration(
+                  filled: true,
+                  fillColor: Colors.white,
+                  contentPadding:
+                  const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+                items: const [
+                  DropdownMenuItem(value: 'all', child: Text('All Categories')),
+                  DropdownMenuItem(value: 'hiking', child: Text('Hiking')),
+                  DropdownMenuItem(value: 'camping', child: Text('Camping')),
+                  DropdownMenuItem(value: 'climbing', child: Text('Climbing')),
+                  DropdownMenuItem(value: 'photography', child: Text('Photography')),
+                  DropdownMenuItem(value: 'cycling', child: Text('Cycling')),
+                ],
+                onChanged: (value) => setState(() => selectedCategory = value!),
+              ),
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: DropdownButtonFormField<String>(
+                value: selectedYear,
+                decoration: InputDecoration(
+                  filled: true,
+                  fillColor: Colors.white,
+                  contentPadding:
+                  const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+                items: const [
+                  DropdownMenuItem(value: '2024', child: Text('2024')),
+                  DropdownMenuItem(value: '2023', child: Text('2023')),
+                  DropdownMenuItem(value: '2022', child: Text('2022')),
+                ],
+                onChanged: (value) => setState(() => selectedYear = value!),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildStatsRow(int total, double distance, double avgRating) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        _buildStatCard(Icons.terrain, "$total", "Adventures", const Color(0xFF003B2E)),
+        _buildStatCard(Icons.route, "${distance.toStringAsFixed(1)} km", "Distance", const Color(0xFFE66A00)),
+        _buildStatCard(Icons.camera_alt, "${_mockAdventures.fold(0, (sum, a) => sum + a.photos)}", "Photos", const Color(0xFF4A90E2)),
+        _buildStatCard(Icons.star, avgRating.toStringAsFixed(1), "Avg Rating", const Color(0xFFFFD700)),
+      ],
     );
   }
 
   Widget _buildStatCard(IconData icon, String value, String label, Color color) {
-    return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8),
-        side: BorderSide(color: const Color(0xFF808080).withOpacity(0.3)),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(icon, size: 20, color: color),
-            const SizedBox(height: 4),
-            Text(value,
-                style: TextStyle(
-                    fontSize: 16, fontWeight: FontWeight.bold, color: color)),
-            const SizedBox(height: 2),
-            Text(label,
-                style: const TextStyle(fontSize: 12, color: Color(0xFF808080))),
-          ],
+    return Expanded(
+      child: Card(
+        elevation: 1,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          child: Column(
+            children: [
+              Icon(icon, color: color),
+              Text(value, style: TextStyle(fontWeight: FontWeight.bold, color: color)),
+              Text(label, style: const TextStyle(fontSize: 12, color: Color(0xFF6B6B6B))),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildAdventureCard(Adventure adventure) {
-    final categoryColor = getCategoryColor(adventure.category);
-    final categoryIcon = getCategoryIcon(adventure.category);
-
+  Widget _buildAdventureCard(Adventure adv) {
     return Card(
+      margin: const EdgeInsets.only(bottom: 12),
       elevation: 2,
-      margin: const EdgeInsets.only(bottom: 16),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Stack(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Column(
+        children: [
+          ClipRRect(
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(12),
+              topRight: Radius.circular(12),
+            ),
+            child: Image.network(
+              adv.coverImage,
+              height: 160,
+              width: double.infinity,
+              fit: BoxFit.cover,
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(12),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  width: 80,
-                  height: 80,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8),
-                    color: const Color(0xFFE0E0E0),
+                Text(
+                  adv.title,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xFF003B2E),
                   ),
-                  child: const Icon(Icons.image, color: Color(0xFF808080)),
                 ),
-                Positioned(
-                  top: 8,
-                  left: 8,
-                  child: Container(
-                    width: 24,
-                    height: 24,
-                    decoration:
-                    BoxDecoration(color: categoryColor, shape: BoxShape.circle),
-                    child: Icon(categoryIcon, size: 12, color: Colors.white),
-                  ),
+                const SizedBox(height: 4),
+                Row(
+                  children: [
+                    const Icon(Icons.location_on, size: 14, color: Color(0xFF6B6B6B)),
+                    const SizedBox(width: 4),
+                    Text(adv.location, style: const TextStyle(color: Color(0xFF6B6B6B))),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text("${adv.duration} • ${adv.difficulty}",
+                        style: const TextStyle(fontSize: 12, color: Color(0xFF6B6B6B))),
+                    Row(
+                      children: List.generate(
+                        adv.rating,
+                            (index) => const Icon(Icons.star, size: 14, color: Color(0xFFFFD700)),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Wrap(
+                  spacing: 6,
+                  runSpacing: 4,
+                  children: adv.highlights.map((h) {
+                    return Chip(
+                      label: Text(h, style: const TextStyle(fontSize: 12)),
+                      backgroundColor: Colors.grey.shade100,
+                    );
+                  }).toList(),
                 ),
               ],
             ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(adventure.title,
-                      style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFF228B22))),
-                  const SizedBox(height: 4),
-                  Text(adventure.location,
-                      style: const TextStyle(
-                          fontSize: 12, color: Color(0xFF808080))),
-                  const SizedBox(height: 4),
-                  Text(
-                    adventure.date.isNotEmpty
-                        ? DateFormat('MMM d, yyyy')
-                        .format(DateTime.tryParse(adventure.date) ?? DateTime.now())
-                        : 'Unknown date',
-                    style:
-                    const TextStyle(fontSize: 12, color: Color(0xFF808080)),
-                  ),
-                  if (adventure.distance != null)
-                    Padding(
-                      padding: const EdgeInsets.only(top: 4),
-                      child: Text(adventure.distance!,
-                          style: const TextStyle(
-                              fontSize: 11, color: Color(0xFF808080))),
-                    ),
-                ],
-              ),
-            )
-          ],
-        ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEmptyState() {
+    return const Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.terrain, size: 64, color: Colors.grey),
+          SizedBox(height: 8),
+          Text('No adventures found', style: TextStyle(color: Color(0xFF003B2E))),
+          Text('Start your first adventure to see it here!',
+              style: TextStyle(color: Color(0xFF6B6B6B))),
+        ],
       ),
     );
   }

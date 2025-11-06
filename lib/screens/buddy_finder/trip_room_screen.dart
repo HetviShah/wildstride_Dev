@@ -580,176 +580,229 @@ class _TripRoomScreenState extends State<TripRoomScreen> with SingleTickerProvid
 
   Widget _buildCreateRoomDialog() {
     return Dialog(
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 600, maxHeight: 600),
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Column(
+      insetPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+      child: SafeArea(
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            return ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 600),
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        'Create Trip Room',
-                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600, color: Color(0xFF003B2E)),
+                      // Header
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Create Trip Room',
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.w600,
+                                    color: Color(0xFF003B2E),
+                                  ),
+                                ),
+                                SizedBox(height: 4),
+                                Text(
+                                  'Set up a coordination hub for your upcoming adventure.',
+                                  style: TextStyle(
+                                    color: Color(0xFF6B6B6B),
+                                    fontSize: 14,
+                                  ),
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ],
+                            ),
+                          ),
+                          IconButton(
+                            onPressed: () => setState(() => showCreateForm = false),
+                            icon: const Icon(Icons.close),
+                          ),
+                        ],
                       ),
-                      Text(
-                        'Set up a coordination hub for your upcoming adventure.',
-                        style: TextStyle(color: Color(0xFF6B6B6B)),
+                      const SizedBox(height: 16),
+
+                      // Room Name and Location
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text('Room Name *',
+                                    style: TextStyle(fontWeight: FontWeight.w500)),
+                                TextField(
+                                  decoration: const InputDecoration(
+                                    hintText: 'Amazing Mountain Adventure Room',
+                                  ),
+                                  onChanged: (value) => newRoomForm['title'] = value,
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text('Trip Location *',
+                                    style: TextStyle(fontWeight: FontWeight.w500)),
+                                TextField(
+                                  decoration: const InputDecoration(
+                                    hintText: 'National Park, City, Country',
+                                  ),
+                                  onChanged: (value) => newRoomForm['location'] = value,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
+                      const SizedBox(height: 16),
+
+                      // Dates Row
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text('Start Date *',
+                                    style: TextStyle(fontWeight: FontWeight.w500)),
+                                TextField(
+                                  readOnly: true,
+                                  decoration: const InputDecoration(hintText: 'Start Date'),
+                                  onTap: () async {
+                                    final date = await showDatePicker(
+                                      context: context,
+                                      initialDate: DateTime.now(),
+                                      firstDate: DateTime.now(),
+                                      lastDate: DateTime.now().add(const Duration(days: 365)),
+                                    );
+                                    if (date != null) {
+                                      setState(() {
+                                        newRoomForm['startDate'] =
+                                        date.toIso8601String().split('T')[0];
+                                      });
+                                    }
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text('End Date *',
+                                    style: TextStyle(fontWeight: FontWeight.w500)),
+                                TextField(
+                                  readOnly: true,
+                                  decoration: const InputDecoration(hintText: 'End Date'),
+                                  onTap: () async {
+                                    final date = await showDatePicker(
+                                      context: context,
+                                      initialDate: DateTime.now(),
+                                      firstDate: DateTime.now(),
+                                      lastDate: DateTime.now().add(const Duration(days: 365)),
+                                    );
+                                    if (date != null) {
+                                      setState(() {
+                                        newRoomForm['endDate'] =
+                                        date.toIso8601String().split('T')[0];
+                                      });
+                                    }
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+
+                      // Participants
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text('Invite Participants',
+                              style: TextStyle(fontWeight: FontWeight.w500)),
+                          TextField(
+                            decoration: const InputDecoration(
+                              hintText: 'Enter email addresses or usernames...',
+                            ),
+                            onChanged: (value) => newRoomForm['participants'] = value,
+                          ),
+                          const Text(
+                            'You can add more participants later',
+                            style: TextStyle(fontSize: 12, color: Color(0xFF6B6B6B)),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+
+                      // Description
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text('Description (Optional)',
+                              style: TextStyle(fontWeight: FontWeight.w500)),
+                          TextField(
+                            decoration: const InputDecoration(
+                              hintText:
+                              'Brief description of the trip and what you\'ll be coordinating...',
+                            ),
+                            maxLines: 4,
+                            onChanged: (value) =>
+                            newRoomForm['description'] = value,
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 24),
+
+                      // Buttons
+                      Row(
+                        children: [
+                          Expanded(
+                            child: OutlinedButton(
+                              onPressed: () => setState(() {
+                                newRoomForm.updateAll((key, value) => '');
+                                showCreateForm = false;
+                              }),
+                              child: const Text('Cancel'),
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: ElevatedButton(
+                              onPressed: handleCreateRoom,
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color(0xFFE66A00),
+                                padding:
+                                const EdgeInsets.symmetric(vertical: 14),
+                              ),
+                              child: const Text('Create Room'),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
                     ],
                   ),
-                  IconButton(
-                    onPressed: () => setState(() => showCreateForm = false),
-                    icon: const Icon(Icons.close),
-                  ),
-                ],
-              ),
-            ),
-            Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text('Room Name *', style: TextStyle(fontWeight: FontWeight.w500)),
-                              TextField(
-                                decoration: const InputDecoration(hintText: 'Amazing Mountain Adventure Room'),
-                                onChanged: (value) => newRoomForm['title'] = value,
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text('Trip Location *', style: TextStyle(fontWeight: FontWeight.w500)),
-                              TextField(
-                                decoration: const InputDecoration(hintText: 'National Park, City, Country'),
-                                onChanged: (value) => newRoomForm['location'] = value,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text('Start Date *', style: TextStyle(fontWeight: FontWeight.w500)),
-                              TextField(
-                                decoration: const InputDecoration(hintText: 'Start Date'),
-                                onTap: () async {
-                                  final date = await showDatePicker(
-                                    context: context,
-                                    initialDate: DateTime.now(),
-                                    firstDate: DateTime.now(),
-                                    lastDate: DateTime.now().add(const Duration(days: 365)),
-                                  );
-                                  if (date != null) {
-                                    setState(() {
-                                      newRoomForm['startDate'] = date.toIso8601String().split('T')[0];
-                                    });
-                                  }
-                                },
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text('End Date *', style: TextStyle(fontWeight: FontWeight.w500)),
-                              TextField(
-                                decoration: const InputDecoration(hintText: 'End Date'),
-                                onTap: () async {
-                                  final date = await showDatePicker(
-                                    context: context,
-                                    initialDate: DateTime.now(),
-                                    firstDate: DateTime.now(),
-                                    lastDate: DateTime.now().add(const Duration(days: 365)),
-                                  );
-                                  if (date != null) {
-                                    setState(() {
-                                      newRoomForm['endDate'] = date.toIso8601String().split('T')[0];
-                                    });
-                                  }
-                                },
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text('Invite Participants', style: TextStyle(fontWeight: FontWeight.w500)),
-                        TextField(
-                          decoration: const InputDecoration(hintText: 'Enter email addresses or usernames...'),
-                          onChanged: (value) => newRoomForm['participants'] = value,
-                        ),
-                        const Text(
-                          'You can add more participants later',
-                          style: TextStyle(fontSize: 12, color: Color(0xFF6B6B6B)),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text('Description (Optional)', style: TextStyle(fontWeight: FontWeight.w500)),
-                        TextField(
-                          decoration: const InputDecoration(
-                            hintText: 'Brief description of the trip and what you\'ll be coordinating...',
-                          ),
-                          maxLines: 4,
-                          onChanged: (value) => newRoomForm['description'] = value,
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 24),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: OutlinedButton(
-                            onPressed: resetCreateForm,
-                            child: const Text('Cancel'),
-                          ),
-                        ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: ElevatedButton(
-                            onPressed: handleCreateRoom,
-                            style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFE66A00)),
-                            child: const Text('Create Room'),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
                 ),
               ),
-            ),
-          ],
+            );
+          },
         ),
       ),
     );
