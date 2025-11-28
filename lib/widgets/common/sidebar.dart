@@ -353,9 +353,9 @@ class _SidebarState extends State<Sidebar> {
             ),
           ),
           ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context);
-              _handleSignOut();
+            onPressed: () async {
+              Navigator.pop(context); // close popup_handleSignOut();
+              _handleSignOut();     // sign out and redirect
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: _getColor('#DC2626'),

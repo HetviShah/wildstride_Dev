@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:wildstride_app/login_page.dart';
 import 'package:wildstride_app/screens/badges_screen.dart';
 // Import your existing screens
 import 'screens/buddy_finder/buddies_screen.dart';
@@ -56,16 +57,30 @@ class _LandingHomePageState extends State<LandingHomePage> {
     });
   }
 
-  void _handleSignOut() async {
+  Future<void> _handleSignOut() async {
     try {
       final prefs = await SharedPreferences.getInstance();
+
+      // Clear auth flag
       await prefs.setBool('wildstride_auth', false);
-      setState(() {
-        _isAuthenticated = false;
-        _activeTab = 'discover';
-        _isSidebarOpen = false;
-      });
-      if (mounted && Navigator.canPop(context)) Navigator.pop(context);
+
+      if (!mounted) return;
+
+      // Directly replace everything with LoginScreen using a smooth fade
+      Navigator.of(context).pushAndRemoveUntil(
+        PageRouteBuilder(
+          pageBuilder: (context, animation, secondaryAnimation) =>
+          LoginPage(),   // <-- your login widget
+          transitionDuration: const Duration(milliseconds: 250),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return FadeTransition(
+              opacity: animation,
+              child: child,
+            );
+          },
+        ),
+            (route) => false, // remove all previous routes
+      );
     } catch (e) {
       debugPrint("Error during sign out: $e");
     }
