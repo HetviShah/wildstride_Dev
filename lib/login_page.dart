@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'logo_widget.dart';
 import 'SignUp/sign_up_flow.dart';
+import 'screens/auth/forgot_password_screen.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -8,7 +9,43 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
   bool _obscurePassword = true;
+
+  String? _emailError;
+  String? _passwordError;
+  bool _isButtonEnabled = false;
+
+  void _validateInputs() {
+    final email = _emailController.text.trim();
+    final password = _passwordController.text.trim();
+
+    String? emailError;
+    String? passwordError;
+
+    // ✅ Email validation
+    if (email.isEmpty) {
+      emailError = 'Please enter your email';
+    } else if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(email)) {
+      emailError = 'Enter a valid email address';
+    }
+
+    // ✅ Password validation
+    if (password.isEmpty) {
+      passwordError = 'Please enter your password';
+    } else if (password.length < 8) {
+      passwordError = 'Password must be at least 8 characters';
+    } else if (!RegExp(r'^(?=.*[A-Za-z])(?=.*\d)').hasMatch(password)) {
+      passwordError = 'Must contain letters and numbers';
+    }
+
+    setState(() {
+      _emailError = emailError;
+      _passwordError = passwordError;
+      _isButtonEnabled = emailError == null && passwordError == null;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -59,25 +96,30 @@ class _LoginPageState extends State<LoginPage> {
 
                     // Email field
                     TextField(
+                      controller: _emailController,
+                      onChanged: (_) => _validateInputs(),
                       decoration: InputDecoration(
                         hintText: "Email address",
-                        prefixIcon: Icon(Icons.email_outlined),
+                        prefixIcon: const Icon(Icons.email_outlined),
                         filled: true,
                         fillColor: Colors.grey[200],
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                           borderSide: BorderSide.none,
                         ),
+                        errorText: _emailError,
                       ),
                     ),
                     const SizedBox(height: 16),
 
                     // Password field
                     TextField(
+                      controller: _passwordController,
+                      onChanged: (_) => _validateInputs(),
                       obscureText: _obscurePassword,
                       decoration: InputDecoration(
                         hintText: "Password",
-                        prefixIcon: Icon(Icons.lock_outline),
+                        prefixIcon: const Icon(Icons.lock_outline),
                         suffixIcon: IconButton(
                           icon: Icon(
                             _obscurePassword
@@ -96,42 +138,55 @@ class _LoginPageState extends State<LoginPage> {
                           borderRadius: BorderRadius.circular(12),
                           borderSide: BorderSide.none,
                         ),
+                        errorText: _passwordError,
                       ),
                     ),
                     const SizedBox(height: 24),
 
-                    // Sign In button
+// Sign-In button
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
-                        onPressed: () {
+                        onPressed: _isButtonEnabled
+                            ? () {
                           // TODO: You can add your validation or Firebase auth check here later.
                           Navigator.pushReplacementNamed(context, '/landing');
-                          },
+                        }
+                            : null,
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: primaryGreen,
-                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          backgroundColor:
+                          _isButtonEnabled ? const Color(0xFF004D2C) : Colors.grey,
+                          padding: const EdgeInsets.symmetric(vertical: 14),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
                         ),
                         child: const Text(
-                          "Sign In",
+                          'Sign In',
                           style: TextStyle(fontSize: 16, color: Colors.white),
                         ),
                       ),
                     ),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: 24),
 
                     // Forgot password
-                    TextButton(
-                      onPressed: () {},
-                      child: Text(
-                        "Forgot password?",
-                        style: TextStyle(color: primaryGreen),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => const ForgotPasswordScreen()),
+                        );
+                      },
+                      child: const Text(
+                        'Forgot password?',
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.w500,
+                          decoration: TextDecoration.underline,
+                        ),
                       ),
                     ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 24),
 
                     // Divider with text
                     Row(
@@ -155,6 +210,7 @@ class _LoginPageState extends State<LoginPage> {
                         _socialButton("assets/images/facebook.png"),
                         _socialButton("assets/images/instagram.png"),
                         _socialButton("assets/images/apple.png"),
+                        _socialButton("assets/images/wechat.png"),
                       ],
                     ),
                     const SizedBox(height: 24),
@@ -190,21 +246,31 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  Widget _socialButton(String assetPath) {
-    return Container(
-      width: 50,
-      height: 50,
-      decoration: BoxDecoration(
-        color: Colors.grey[200],
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Center(
-        child: Image.asset(
-          assetPath,
-          height: 24,
-          errorBuilder: (ctx, err, stack) => Icon(Icons.error),
+  Widget _socialButton(String asset) {
+    return GestureDetector(
+      onTap: () {
+        // Navigate to Landing Page when tapped
+        Navigator.pushReplacementNamed(context, '/landing');
+      },
+      child: Container(
+        width: 48,
+        height: 48,
+        padding: const EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: Colors.grey.shade300),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 3,
+              offset: const Offset(0, 1),
+            ),
+          ],
         ),
+        child: Image.asset(asset, fit: BoxFit.contain),
       ),
     );
   }
+
 }

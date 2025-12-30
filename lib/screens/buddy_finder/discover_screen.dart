@@ -167,16 +167,21 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
 
             // Main Card
             Expanded(
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    _buildBuddyCard(buddy, theme),
-                    const SizedBox(height: 24),
-                    
-                    // Action Buttons
-                    _buildActionButtons(),
-                  ],
-                ),
+              child: Column(
+                children: [
+                  // Buddy card takes most of the height
+                  Expanded(
+                    child: _buildBuddyCard(buddy, theme),
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  // Action buttons at bottom
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 16),
+                    child: _buildActionButtons(),
+                  ),
+                ],
               ),
             ),
           ],
@@ -490,128 +495,118 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
     return Card(
       elevation: 4,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      clipBehavior: Clip.antiAlias,
       child: Column(
         children: [
           // Image Section
-          Stack(
-            children: [
-              ClipRRect(
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(16),
-                  topRight: Radius.circular(16),
-                ),
-                child: Image.network(
-                  buddy.image,
-                  height: 300,
-                  width: double.infinity,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) {
-                    return Container(
-                      height: 300,
-                      color: Colors.grey[300],
-                      child: Icon(Icons.person, size: 64, color: Colors.grey[600]),
-                    );
-                  },
-                ),
-              ),
-              
-              // Compatibility Badge
-              Positioned(
-                top: 16,
-                right: 16,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(20),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
-                        blurRadius: 4,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
-                  ),
-                  child: Text(
-                    '${buddy.compatibility}%',
-                    style: TextStyle(
-                      color: const Color(0xFFE66A00),
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ),
-              
-              // Verification Badge
-              Positioned(
-                top: 16,
-                left: 16,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                  decoration: BoxDecoration(
-                    color: _getVerificationColor(buddy.verificationLevel),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Text(
-                    buddy.verificationLevel,
-                    style: TextStyle(
-                      color: _getVerificationTextColor(buddy.verificationLevel),
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          
-          // Content Section
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+          SizedBox(
+            height: MediaQuery.of(context).size.height * 0.45, // responsive image height
+            width: double.infinity,
+            child: Stack(
+              fit: StackFit.expand,
               children: [
-                // Name and Location
-                Column(
+                Image.network(
+                  buddy.image,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) => Container(
+                    color: Colors.grey[300],
+                    child: const Icon(Icons.person, size: 80, color: Colors.grey),
+                  ),
+                ),
+
+                // Compatibility Badge
+                Positioned(
+                  top: 16,
+                  right: 16,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          blurRadius: 4,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: Text(
+                      '${buddy.compatibility}%',
+                      style: const TextStyle(
+                        color: Color(0xFFE66A00),
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+
+                // Verification Badge
+                Positioned(
+                  top: 16,
+                  left: 16,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: _getVerificationColor(buddy.verificationLevel),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Text(
+                      buddy.verificationLevel,
+                      style: TextStyle(
+                        color: _getVerificationTextColor(buddy.verificationLevel),
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          // Info Section
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: SingleChildScrollView(
+                physics: const NeverScrollableScrollPhysics(), // prevent scroll inside
+                child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       '${buddy.name}, ${buddy.age}',
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.w600,
-                        color: const Color(0xFF003B2E),
+                        color: Color(0xFF003B2E),
                       ),
                     ),
                     const SizedBox(height: 4),
                     Row(
                       children: [
-                        Icon(Icons.location_on, size: 16, color: const Color(0xFF6B6B6B)),
+                        const Icon(Icons.location_on, size: 16, color: Color(0xFF6B6B6B)),
                         const SizedBox(width: 4),
                         Text(
                           buddy.location,
-                          style: TextStyle(color: const Color(0xFF6B6B6B)),
+                          style: const TextStyle(color: Color(0xFF6B6B6B)),
                         ),
                       ],
                     ),
+                    const SizedBox(height: 12),
+                    Text(
+                      buddy.bio,
+                      style: const TextStyle(color: Color(0xFF6B6B6B)),
+                      maxLines: 3,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 12),
+                    _buildBuddyInterestsSection(buddy),
+                    const SizedBox(height: 12),
+                    _buildUpcomingTrips(buddy),
                   ],
                 ),
-                const SizedBox(height: 16),
-                
-                // Bio
-                Text(
-                  buddy.bio,
-                  style: TextStyle(color: const Color(0xFF6B6B6B)),
-                ),
-                const SizedBox(height: 16),
-                
-                // Interests
-                _buildBuddyInterestsSection(buddy),
-                const SizedBox(height: 16),
-                
-                // Upcoming Adventures
-                _buildUpcomingTrips(buddy),
-              ],
+              ),
             ),
           ),
         ],

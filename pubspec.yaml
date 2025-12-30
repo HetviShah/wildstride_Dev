@@ -74,6 +74,8 @@ flutter:
       - assets/images/facebook.png
       - assets/images/instagram.png
       - assets/images/apple.png
+      - assets/images/wechat.png
+
 
   # To add assets to your application, add an assets section, like this:
   # assets:
